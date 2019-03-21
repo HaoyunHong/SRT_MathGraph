@@ -1,6 +1,6 @@
 '''
 author: 谢韬
-该文件是实例文件，请不要直接修改
+该文件是示例文件，请不要直接修改
 '''
 
 from node import *
@@ -189,7 +189,7 @@ results = solve(constraints, tosolve, dict=True)
 print("所有基本属性的解：")
 print(results)
 
-#解约束，以下部分因题而异（因为最终结果不定）
+#解约束，以下部分不随题目变化，因为新版本中将要求的结果写入了题目中
 for i in range(len(results)):
     for name in instances:
         #将instance中的基本属性替换为解
