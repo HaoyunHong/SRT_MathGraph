@@ -1,0 +1,11 @@
+Complex z1
+Complex z2
+Complex z3
+Real r1
+Real r2
+CalcMod z3 r1
+Constraint r2**2-r1
+ComplexConjugate z1 z3
+Constraint z1-z2*I
+Constraint z1+z2+1-7*I
+Query r2

@@ -12,6 +12,7 @@ class Instance:
     pass
 
 instances = {}
+nodes = {}
 
 class ObjectNode(Node):
     def __init__(self, name, P, C, toSympy="", E=[]):
@@ -29,6 +30,9 @@ class ObjectNode(Node):
         self.E = E
         self.toSympy = toSympy
         self.instances = {}
+
+        global nodes
+        nodes[self.name] = self
         '''
         self.toSave = "ObjectNode\n" + name + "\n" + P + "\n" + C
         '''
@@ -50,6 +54,9 @@ class OperationNode(Node):
         self.output = output
         self.f = f
         self.E = E
+
+        global nodes
+        nodes[self.name] = self
         '''
         self.instances = []
         self.toSave = "OperationNode\n" + name + "\n"
@@ -80,6 +87,9 @@ class ConstraintNode(Node):
         self.input = input
         self.C = C
         self.E = E
+
+        global nodes
+        nodes[self.name] = self
         '''
         self.instances = []
         self.toSave = "ConstraintNode\n" + name + "\n"
