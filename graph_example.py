@@ -224,6 +224,7 @@ while cnt < len(input_lines):
         cnt = cnt + 1
         if cnt >= len(input_lines):
             has_questions = False
+            break
     if not has_questions:
         break
     question_cnt = question_cnt + 1

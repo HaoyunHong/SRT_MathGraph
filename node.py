@@ -183,6 +183,18 @@ class ObjectInstance(Instance):
             PV2[str(key)] = PV[key]
         return eval(self.objNode.spec_attr[attrname].replace("$", self.name + "_"), PV2)
 
+    def judgeResult(self, PV):
+        PV2 = {}
+        for key in PV:
+            PV2[str(key)] = PV[key]
+        return eval(self.objNode.C, PV2)
+
+    def generateDict(self, PV):
+        ret_PV = {}
+        for attr in self.PV:
+            ret_PV[attr] = self.PV[attr].subs(PV)
+        return ret_PV
+
     def __getitem__(self, item):
         return self.PV[item]
 
@@ -221,6 +233,12 @@ class ConstraintInstance(Instance):
         for e in self.conNode.E:
             ret.append(eval(e))
         return ret
+
+    def judgeResult(self, PV):
+        input = []
+        for i in self.input:
+            input.append(i.generateDict(PV))
+        return eval(self.conNode.C.replace("self.", ""))
 
 
 

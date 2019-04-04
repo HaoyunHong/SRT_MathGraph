@@ -22,6 +22,7 @@ def q_solve(question_input_list, graph_file, printTemp=False):
     symbol2ins = {}
     symbol2sympy = {}
     constraints = []
+    constraints_judge = []
     basic_symbols = []
 
     #根据节点描述指令生成对象
@@ -59,8 +60,23 @@ def q_solve(question_input_list, graph_file, printTemp=False):
     result_cnt = 0
     ret = []
     for result in results:
+        #判断结果是否满足条件
+        judge = True
+        for name in obj_instances:
+            judge = judge and obj_instances[name].judgeResult(result)
+        for ins in con_instances:
+            judge = judge and ins.judgeResult(result)
+        obj_PV = {}
+        for name in obj_instances:
+            if obj_instances[name].objNode.isSympyInstance():
+                obj_PV[name] = obj_instances[name].toSympyInstance().subs(result)
+        for constraint in constraints_judge:
+            judge = judge and eval(constraint, obj_PV)
+        if not judge:
+            continue
         ret.append({})
         for name in commands["res"]:
+            #加入结果集
             if name.count(".") == 0:
                 #对应普通的求值
                 ret[result_cnt][name] = symbol2ins[name].toSympyInstance().subs(result)

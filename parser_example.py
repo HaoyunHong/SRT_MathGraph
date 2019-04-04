@@ -1,10 +1,9 @@
-'''
+﻿'''
 author: 谢韬
 该文件是一个词法分析文件，接受一个格式化的字符串，生成一系列的指令
 '''
 
 from node import *
-from utility.parse_latex import *
 
 #前置特殊字符串ObjIns
 #例如一个变量x在这里会变成ObjIns_x
@@ -39,7 +38,11 @@ def generateCommands(command_list, graph):
         #当输入为一个约束表达式时，直接将约束表达式字符串扔到constraints列表中
         if NodeType.startswith("#"):
             continue
-        if NodeType.startswith("Constraint"):
+        if NodeType.startswith("ConstraintJudge"):
+            #不等式/等式判据，无法用于solve求解，为一个等式/不等式而非表达式
+            ret.append("constraints_judge.append('%s')" % command[0][16:len(command[0])])
+        elif NodeType.startswith("Constraint"):
+            #等式判据，可用于solve求解，为一个表达式而非等式/不等式
             ret.append("constraints.append('%s')" % command[0][11:len(command[0])])
         #当输入为一个求解请求时，将求解请求的变量扔到返回的res列表中
         elif NodeType == "Query":
@@ -64,7 +67,7 @@ def generateCommands(command_list, graph):
             elif isinstance(node, ConstraintNode):
                 input = symbols2str(command, 1, len(node.input), str_spec=str_spec)
                 ret.append("%s = graph.ConstraintInstance(graph.%s, %s)" % (command[0] + str(cnt), command[0], input))
-                ret.append("op_instances.append(%s)" % (command[0] + str(cnt)))
+                ret.append("con_instances.append(%s)" % (command[0] + str(cnt)))
                 cnt = cnt + 1
         elif NodeType == "":
             pass
