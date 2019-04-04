@@ -1,3 +1,9 @@
+#在一句前面加个#可以表示注释
+
+#如果一行以$符号开始代表到下一个$符号中间的行是一道题目
+#在第一个$下方需要有一行表示该题目的图谱文件，例如图谱文件
+$1
+complex_graph
 Complex z1
 Complex z2
 Complex z3
@@ -9,3 +15,23 @@ ComplexConjugate z1 z3
 Constraint z1-z2*I
 Constraint z1+z2+1-7*I
 Query r2
+$1 end
+
+$2
+complex_graph
+Complex z1
+Real r
+Constraint r + 1
+Constraint z1**4-r
+Query z1 z1.area
+$1 end
+
+$3
+complex_graph
+Complex z1
+Real a1
+#错误的指令GetRealPart，应为GetRePart
+GetRealPart z1 a1
+Constraint z1-I
+Query a1
+$3 end

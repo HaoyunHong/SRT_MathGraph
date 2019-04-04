@@ -11,17 +11,26 @@ class Node:
 class Instance:
     pass
 
-instances = {}
+'''
+obj_instances = {}
+op_instances = []
+con_instances = []
 nodes = {}
+'''
 
 class ObjectNode(Node):
-    def __init__(self, name, P, C, toSympy="", E=[]):
+    def __init__(self, name, P, C, toSympy="", E=[], spec_attr={}):
         #name：指本ObjectNode的名称，例如"Complex"，"Triangle"等
         #P：指对象节点的属性，格式为若干个名称用空格隔开，例如"a b c"
         #C：指对象节点的约束，对某一属性的访问用"self[属性]"表示
         #   例如三角形两边之和大于第三边可以是"self['a']+self['b']>self['c']"
         #toSympy：默认为空字符串，详细可见ObjectInstance类中的toSympyInstance方法
         #E：约束等式的集合，例如三角形有["self['A']+self['B']+self['C']-pi"]等
+        #attr: 指特殊属性，例如复数的象限，角度是钝角还是锐角等一些由基本属性所确定的属性
+        #      例如复数的象限"area": "1 if ... else 2 if ... else ..."
+        #      例如三角形的形状"shape": "'锐角' if $A<pi/2 and $B<pi/2 and $C<pi/2 else '非锐角三角形'"
+        #      字典中的key是属性名称，value是一个可以eval的式子
+        #      eval中的式子中要使用基本属性则使用$加上基本属性的名称即可，后面会将$替换为某一特定instance的name属性
         self.name = name
         self.P = P.split(" ")
         if self.P.count("") > 0:
@@ -30,9 +39,10 @@ class ObjectNode(Node):
         self.E = E
         self.toSympy = toSympy
         self.instances = {}
+        self.spec_attr = spec_attr
 
-        global nodes
-        nodes[self.name] = self
+        #global nodes
+        #nodes[self.name] = self
         '''
         self.toSave = "ObjectNode\n" + name + "\n" + P + "\n" + C
         '''
@@ -55,8 +65,8 @@ class OperationNode(Node):
         self.f = f
         self.E = E
 
-        global nodes
-        nodes[self.name] = self
+        #global nodes
+        #nodes[self.name] = self
         '''
         self.instances = []
         self.toSave = "OperationNode\n" + name + "\n"
@@ -88,8 +98,8 @@ class ConstraintNode(Node):
         self.C = C
         self.E = E
 
-        global nodes
-        nodes[self.name] = self
+        #global nodes
+        #nodes[self.name] = self
         '''
         self.instances = []
         self.toSave = "ConstraintNode\n" + name + "\n"
@@ -111,8 +121,8 @@ class ObjectInstance(Instance):
         self.PV = {}
         for p in self.objNode.P:
             self.PV[p] = Symbol(name + "_" + p, real=True)
-        global instances
-        instances[self.name] = self
+        #global obj_instances
+        #obj_instances[self.name] = self
 
     def isCertain(self):
         #每一个Sympy对象中都有一个属性is_number，用来判断该对象是否为一个确定的数
@@ -167,6 +177,12 @@ class ObjectInstance(Instance):
             ret.append(eval(e))
         return ret
 
+    def getSpecialAttr(self, attrname, PV):
+        PV2 = {}
+        for key in PV:
+            PV2[str(key)] = PV[key]
+        return eval(self.objNode.spec_attr[attrname].replace("$", self.name + "_"), PV2)
+
     def __getitem__(self, item):
         return self.PV[item]
 
@@ -178,6 +194,8 @@ class OperationInstance(Instance):
         self.opNode = opNode
         self.input = input
         self.output = output
+        #global op_instances
+        #op_instances.append(self)
 
     def calculate(self):
         exec(self.opNode.f)
@@ -192,6 +210,8 @@ class ConstraintInstance(Instance):
     def __init__(self, conNode, input):
         self.conNode = conNode
         self.input = input
+        #global con_instances
+        #con_instances.append(self)
 
     def isLegal(self):
         return eval(self.conNode.C)
