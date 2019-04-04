@@ -14,6 +14,21 @@
 python graph_example.py
 ```
 
+以示例题目文件为例，输出应当类似于以下内容
+
+```
+题目1:
+{'r2': -sqrt(5)}
+{'r2': sqrt(5)}
+题目2:
+{'z1': -sqrt(2)/2 - sqrt(2)*I/2, 'z1.area': '第三象限'}
+{'z1': -sqrt(2)/2 + sqrt(2)*I/2, 'z1.area': '第二象限'}
+{'z1': sqrt(2)/2 - sqrt(2)*I/2, 'z1.area': '第四象限'}
+{'z1': sqrt(2)/2 + sqrt(2)*I/2, 'z1.area': '第一象限'}
+题目3:
+未能编译的指令: GetRealPart z1 a1
+```
+
 ## 文件说明（只含有用文件说明）
 
 ### node.py
